@@ -1,0 +1,21 @@
+{
+  "name": "wetube",
+  "version": "1.0.0",
+  "description": "The video.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Crteas/wetube-recap.git"
+  },
+  "scripts": {
+    "win": "node index.js"
+  },
+  "author": "Pru",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Crteas/wetube-recap/issues"
+  },
+  "homepage": "https://github.com/Crteas/wetube-recap#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
