@@ -1,5 +1,9 @@
 import express from "express"; //node_modules 에서 express찾고있어요!!
 import morgan from "morgan"; //External Middleware!
+import globalRouter from "./routers/globalRouter";
+import userRouter from "./routers/userRouter";
+import videoRouter from "./routers/videoRouter";
+import pruRouter from "./routers/pruRouter";
 
 const PORT = 9000;
 
@@ -7,25 +11,7 @@ const app = express(); //Creates an Express application
 const logger = morgan("dev"); //morgan!!
 app.use(logger);
 
-//Make Router
-
-const globalRouter = express.Router();
-const handleHome = (req, res) => res.send("Home");
-globalRouter.get("/", handleHome);
-
-const videoRouter = express.Router();
-const handleWatchVideo = (req, res) => res.send("Watch");
-videoRouter.get("/watch", handleWatchVideo);
-
-const userRouter = express.Router();
-const handleEditUser = (req, res) => res.send("Edit");
-userRouter.get("/edit", handleEditUser);
-
-const pruRouter = express.Router();
-const handlePru = (req, res) => res.send("PRU IS GOOD");
-pruRouter.get("/pru", handlePru);
-
-//누가 "/"로 시작하는 url에 접근하면 videoRouter에 있는 컨트롤러를 찾게하는것
+//누가 "/"로 시작하는 url에 들어가면 express 는 globalRouter에 들어가서 url의 마지막 주소를 찾음.
 app.use("/", globalRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
