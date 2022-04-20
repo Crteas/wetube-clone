@@ -1,7 +1,8 @@
 import express from "express";
+import { helloPru, heroPru } from "../controllers/pruController";
 
 const pruRouter = express.Router();
-const handlePru = (req, res) => res.send("PRU IS GOOD");
-pruRouter.get("/pru", handlePru);
+pruRouter.get("/hello", helloPru);
+pruRouter.get("/hero", heroPru);
 
 export default pruRouter;
