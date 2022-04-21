@@ -1,4 +1,5 @@
-export const helloPru = (req, res) => {
-  res.send("Pru!!");
-};
-export const heroPru = (req, res) => res.send("I'm Pru");
+export const helloPru = (req, res) => res.send("Pru!!");
+
+export const herolist = (req, res) => res.send(`${req.params.heros}`);
+
+export const finalfantazy = (req, res) => res.send("ff14!");

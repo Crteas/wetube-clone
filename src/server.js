@@ -3,7 +3,7 @@ import morgan from "morgan"; //External Middleware!
 import globalRouter from "./routers/globalRouter";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
-import pruRouter from "./routers/pruRouter";
+import heroRouter from "./routers/heroRouter";
 
 const PORT = 9000;
 
@@ -15,7 +15,7 @@ app.use(logger);
 app.use("/", globalRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
-app.use("/hero", pruRouter);
+app.use("/hero", heroRouter);
 
 const handleListening = () => {
   console.log(`Server Start! http://localhost:${PORT} 🚀`);
