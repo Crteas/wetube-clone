@@ -11,6 +11,14 @@ const app = express(); //Creates an Express application
 const logger = morgan("dev"); //morgan!!
 app.use(logger);
 
+console.log();
+
+//express 설정(set)
+//View engine 설정하기. (express) 뷰 엔진을 퍼그로.
+app.set("view engine", "pug");
+//process.cwd() -> 노드가 시작하는 파일기준
+app.set("views", process.cwd() + "/src/views");
+
 //누가 "/"로 시작하는 url에 들어가면 express 는 globalRouter에 들어가서 url의 마지막 주소를 찾음.
 app.use("/", globalRouter);
 app.use("/videos", videoRouter);
