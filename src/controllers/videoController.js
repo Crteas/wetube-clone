@@ -3,8 +3,10 @@ const pru = {
   loggedIn: false,
 };
 
-export const trending = (req, res) =>
-  res.render("home", { pageTitle: "home", pru });
+export const trending = (req, res) => {
+  const videos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 100, 1000];
+  return res.render("home", { pageTitle: "home", videos });
+};
 export const see = (req, res) => {
   //req.params는 parameter?
   return res.render("watch", { pageTitle: "watch" });

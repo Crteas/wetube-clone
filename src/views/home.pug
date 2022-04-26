@@ -2,3 +2,6 @@ extends base.pug
 
 block content
    h2 Welcome to Wetube!
+   ul
+        each video in videos
+            li=video
