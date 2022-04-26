@@ -1,8 +1,24 @@
 doctype html
 html(lang="ko")
     head 
-        block head
+        title #{pageTitle} | Wetube
+        link(rel="stylesheet" href="https://unpkg.com/mvp.css")
     body
-        block content
+        header
+            if pru.loggedIn 
+                small Hello #{pru.username}
+            nav
+                ul
+                    //pug의 조건문!
+                    if pru.loggedIn
+                        li 
+                            a(href="/logout") Log out
+                    else
+                        li 
+                            a(href="/login") Login
+            h1=pageTitle
+        
+        main
+            block content
         
     include partials/footer.pug
