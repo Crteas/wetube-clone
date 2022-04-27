@@ -4,7 +4,32 @@ const pru = {
 };
 
 export const trending = (req, res) => {
-  const videos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 100, 1000];
+  const videos = [
+    {
+      title: "1",
+      rating: 3,
+      comment: 9999,
+      createdAt: "2 mins ago",
+      views: 108534,
+      id: 1,
+    },
+    {
+      title: "2",
+      rating: 2,
+      comment: 2354,
+      createdAt: "2 mins ago",
+      views: 12548,
+      id: 1,
+    },
+    {
+      title: "3",
+      rating: 4,
+      comment: 9874,
+      createdAt: "2 mins ago",
+      views: 4582,
+      id: 1,
+    },
+  ];
   return res.render("home", { pageTitle: "home", videos });
 };
 export const see = (req, res) => {

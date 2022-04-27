@@ -1,7 +1,10 @@
 extends base.pug
+include mixins/video
 
 block content
    h2 Welcome to Wetube!
-   ul
-        each video in videos
-            li=video
+    //mixin part
+    each video in videos
+        +video(video)
+    else
+        li Sorry nothing found!
