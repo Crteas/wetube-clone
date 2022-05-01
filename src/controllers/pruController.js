@@ -1,6 +1,12 @@
 export const helloPru = (req, res) => res.send("Pru!!");
 
-export const herolist = (req, res) => res.send(`${req.params.heros}`);
+export const herolist = (req, res) => {
+  return res.render("pru", { pageTitle: "Pru" });
+};
+export const postHeroList = (req, res) => {
+  console.log(req.body);
+  return res.end();
+};
 
 export const finalfantazy = (req, res) => res.send("ff14!");
 

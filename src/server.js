@@ -4,7 +4,6 @@ import globalRouter from "./routers/globalRouter";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import heroRouter from "./routers/heroRouter";
-import { urlencoded } from "express";
 
 const PORT = 9000;
 

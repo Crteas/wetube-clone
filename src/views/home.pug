@@ -2,7 +2,10 @@ extends base.pug
 include mixins/video
 
 block content
-   h2 Welcome to Wetube!
+    nav
+    ul
+        li
+            a(href="/videos/upload") Upload
     //mixin part
     each video in videos
         +video(video)
