@@ -1,4 +1,5 @@
 import "./db";
+import "./models/Video";
 import express from "express"; //node_modules 에서 express찾고있어요!!
 import morgan from "morgan"; //External Middleware!
 import globalRouter from "./routers/globalRouter";
