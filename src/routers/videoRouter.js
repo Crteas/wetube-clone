@@ -16,8 +16,8 @@ const videoRouter = express.Router();
 // /:id를 위에 두면 upload를 파라미터로 착각함.
 //(\\d+)는 정규식! \d+는 뒤에 숫자만 받겠다!
 videoRouter.route("/upload").get(getUpload).post(postUpload);
-videoRouter.get("/:id(\\d+)", watch);
-videoRouter.route("/:id(\\d+)/edit").get(getEdit).post(postEdit);
+videoRouter.get("/:id([0-9a-f]{24})", watch);
+videoRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
 /* videoRouter.get("/:id(\\d+)/edit", getEdit);
 videoRouter.post("/:id(\\d+)/edit", postEdit); */
 
