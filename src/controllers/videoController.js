@@ -1,4 +1,4 @@
-import Video from "../models/Video";
+import Video, { formatHashtags } from "../models/Video";
 
 /*
 callback
@@ -46,10 +46,7 @@ export const postEdit = async (req, res) => {
   await Video.findByIdAndUpdate(id, {
     title,
     description,
-    hashtags: hashtags
-      .replaceAll("#", "")
-      .split(",")
-      .map((word) => `#${word}`),
+    hashtags: Video.formatHashtags(hashtags),
   });
 
   return res.redirect(`/videos/${id}`);
@@ -66,7 +63,7 @@ export const postUpload = async (req, res) => {
     await Video.create({
       title,
       description,
-      hashtags,
+      hashtags: Video.formatHashtags(hashtags),
       meta: {
         views: 0,
         rating: 0,
