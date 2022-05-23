@@ -1,10 +1,15 @@
 import express from "express"; //node_modules 에서 express찾고있어요!!
 import morgan from "morgan"; //External Middleware!
 import session from "express-session"; //Session import!
+import MongoStore from "connect-mongo"; //세션을 저장하기위해서!
+
+//import Router
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import heroRouter from "./routers/heroRouter";
 import rootRouter from "./routers/rootRouter";
+
+//import middleware
 import { localsMiddleware } from "./middlewares";
 
 const app = express(); //Creates an Express application
@@ -25,6 +30,7 @@ app.use(
     secret: "Hello!",
     resave: true,
     saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/metube" }),
   })
 );
 
