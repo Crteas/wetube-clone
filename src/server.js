@@ -27,10 +27,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: "Hello!",
-    resave: true,
-    saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/metube" }),
+    secret: process.env.COOKIE_SECRET, //session hijack을 방지하기위한것. cookie에 sign하기위한 String
+    resave: false,
+    saveUninitialized: false, //세션에 변동이 있을때 저장하게하기
+    store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );
 

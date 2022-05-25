@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 //몽구스와 몽고디비 연결!
-mongoose.connect("mongodb://127.0.0.1:27017/metube");
+mongoose.connect(process.env.DB_URL);
 
 //몽구스와 커넥션
 const db = mongoose.connection;

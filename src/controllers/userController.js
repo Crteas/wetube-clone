@@ -1,4 +1,5 @@
 import User from "../models/User";
+import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "JOIN!" });
@@ -34,15 +35,14 @@ export const postJoin = async (req, res) => {
     });
   }
 };
-export const edit = (req, res) => res.send("User Edit");
-export const remove = (req, res) => res.send("remove User!");
 export const getLogin = (req, res) => {
   return res.render("login", { pageTitle: "Login!" });
 };
+
 export const postLogin = async (req, res) => {
   const pageTitle = "Login!";
   const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
@@ -61,5 +61,104 @@ export const postLogin = async (req, res) => {
   req.session.user = user;
   return res.redirect("/");
 };
+
+export const startGithubLogin = (req, res) => {
+  //그냥 URL 있어보이게 만든것
+  const baseUrl = `https://github.com/login/oauth/authorize`;
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    allow_signup: false,
+    scope: "read:user user:email",
+  };
+  //URLSearchParams는 Object를 Url형식으로 합쳐준다!
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  return res.redirect(finalUrl);
+};
+
+//깃허브에 들어갔다온 유저가 받아오는것들
+export const finishGithubLogin = async (req, res) => {
+  //URL 있어보이게 만들기!!
+  const baseUrl = "https://github.com/login/oauth/access_token";
+  //process.env.{KEY}
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    client_secret: process.env.GH_SECRET,
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  //받은 CODE를 access_token으로 바꾸기!
+  const tokenRequest = await //nodeJS에서 fetch를 쓰려면 node-fetch를 써야함
+  (
+    await fetch(finalUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+  ).json();
+
+  //access_token을 가지고 GithubAPI를 이용해서 user의 정보를 가져오기!
+  if ("access_token" in tokenRequest) {
+    const { access_token } = tokenRequest;
+    const apiUrl = "https://api.github.com";
+    //access_token은 github API URL을 fetch하는데 사용됨.
+    const userData = await (
+      await fetch(`${apiUrl}/user`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    console.log(userData);
+    //이메일받기
+    const emailData = await (
+      await fetch(`${apiUrl}/user/emails`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    //emailData.find를 하면 Obj이 반환됨.
+    const emailObj = emailData.find(
+      (email) => email.primary === true && email.verified === true
+    );
+    if (!emailObj) {
+      return res.redirect("/login");
+    }
+    const existUser = await User.findOne({ email: emailObj.email });
+    console.log(existUser);
+    //이 이메일을 가진 유저가 있다면
+    if (existUser) {
+      //로그인!
+      req.session.loggedIn = true;
+      req.session.user = existUser;
+      return res.redirect("/");
+      //이 이메일을 가진 유저가 없다면
+    } else {
+      try {
+        const user = await User.create({
+          name: userData.name ? userData.name : "Unknown",
+          email: emailObj.email,
+          username: userData.login,
+          password: "",
+          location: userData.location ? userData.location : "",
+          socialOnly: true,
+        });
+        req.session.loggedIn = true;
+        req.session.user = user;
+      } catch (error) {
+        console.log(error);
+        return res.redirect("/login");
+      }
+    }
+  } else {
+    return res.redirect("/login");
+  }
+};
+
+export const edit = (req, res) => res.send("User Edit");
+export const remove = (req, res) => res.send("remove User!");
 export const logout = (req, res) => res.send("LogOut!");
 export const see = (req, res) => res.send("See User!");
