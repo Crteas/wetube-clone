@@ -127,18 +127,13 @@ export const finishGithubLogin = async (req, res) => {
     if (!emailObj) {
       return res.redirect("/login");
     }
-    const existUser = await User.findOne({ email: emailObj.email });
-    console.log(existUser);
-    //이 이메일을 가진 유저가 있다면
-    if (existUser) {
-      //로그인!
-      req.session.loggedIn = true;
-      req.session.user = existUser;
-      return res.redirect("/");
-      //이 이메일을 가진 유저가 없다면
-    } else {
+    let user = await User.findOne({ email: emailObj.email });
+    //이 이메일을 가진 유저가 없다면!
+    if (!user) {
+      //만들기!
       try {
-        const user = await User.create({
+        user = await User.create({
+          avatarUrl: userData.avatar_url,
           name: userData.name ? userData.name : "Unknown",
           email: emailObj.email,
           username: userData.login,
@@ -146,13 +141,14 @@ export const finishGithubLogin = async (req, res) => {
           location: userData.location ? userData.location : "",
           socialOnly: true,
         });
-        req.session.loggedIn = true;
-        req.session.user = user;
       } catch (error) {
         console.log(error);
         return res.redirect("/login");
       }
     }
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect("/");
   } else {
     return res.redirect("/login");
   }
@@ -160,5 +156,8 @@ export const finishGithubLogin = async (req, res) => {
 
 export const edit = (req, res) => res.send("User Edit");
 export const remove = (req, res) => res.send("remove User!");
-export const logout = (req, res) => res.send("LogOut!");
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+};
 export const see = (req, res) => res.send("See User!");
