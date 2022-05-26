@@ -154,6 +154,77 @@ export const finishGithubLogin = async (req, res) => {
   }
 };
 
+export const startKakaoLogin = (req, res) => {
+  const baseUrl = "https://kauth.kakao.com/oauth/authorize";
+  const config = {
+    client_id: process.env.KA_CLIENT,
+    redirect_uri: "http://localhost:9000/users/kakao/finish",
+    response_type: "code",
+    client_secret: process.env.KA_SECRET,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  console.log(finalUrl);
+  return res.redirect(finalUrl);
+};
+
+export const finishKakaoLogin = async (req, res) => {
+  const baseUrl = "https://kauth.kakao.com/oauth/token";
+  const config = {
+    client_id: process.env.KA_CLIENT,
+    client_secret: process.env.KA_SECRET, //finish쪽도 시크릿키 필요함!
+    redirect_uri: "http://localhost:9000/users/kakao/finish",
+    grant_type: "authorization_code",
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+
+  const tokenRequest = await (
+    await fetch(finalUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    })
+  ).json();
+
+  if ("access_token" in tokenRequest) {
+    const { access_token } = tokenRequest;
+    const apiUrl = "https://kapi.kakao.com";
+    const userData = await (
+      await fetch(`${apiUrl}/v2/user/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+    ).json();
+    console.log(userData);
+
+    try {
+      let user = await User.findOne({ email: userData.kakao_account.email });
+
+      if (!user) {
+        user = await User.create({
+          name: userData.kakao_account.profile.nickname,
+          email: userData.kakao_account.email,
+          username: userData.kakao_account.profile.nickname,
+          password: "",
+          socialOnly: true,
+        });
+      }
+      req.session.loggedIn = true;
+      req.session.user = user;
+    } catch (error) {
+      console.log(error);
+    }
+
+    return res.redirect("/");
+  }
+};
+
 export const edit = (req, res) => res.send("User Edit");
 export const remove = (req, res) => res.send("remove User!");
 export const logout = (req, res) => {
