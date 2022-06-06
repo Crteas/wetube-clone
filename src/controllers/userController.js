@@ -1,4 +1,5 @@
 import User from "../models/User";
+import Video from "../models/Video";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
@@ -225,10 +226,99 @@ export const finishKakaoLogin = async (req, res) => {
   }
 };
 
-export const edit = (req, res) => res.send("User Edit");
+export const getEdit = (req, res) => {
+  res.render("edit-profile", {
+    pageTitle: "Edit Profile!",
+  });
+};
+export const postEdit = async (req, res) => {
+  const {
+    session: {
+      user: { _id, avatarUrl, username: sessionUsername, email: sessionEmail },
+    },
+    body: { name, email, username, location },
+    file,
+  } = req;
+  const existsEmail = await User.findOne({ email });
+  const existsUsername = await User.findOne({ username });
+
+  if (existsEmail && existsEmail.email !== sessionEmail) {
+    return res.render("edit-profile", {
+      pageTitle: "Edit Profile!",
+      errorMessage: "Email already exists!",
+    });
+  }
+
+  if (existsUsername && existsUsername.username !== sessionUsername) {
+    return res.render("edit-profile", {
+      pageTitle: "Edit Profile!",
+      errorMessage: "Username already exists!",
+    });
+  }
+
+  const updateuser = await User.findByIdAndUpdate(
+    _id,
+    {
+      avatarUrl: file ? file.path : avatarUrl,
+      name,
+      email,
+      username,
+      location,
+    },
+    { new: true }
+  );
+  req.session.user = updateuser;
+  res.redirect("edit");
+};
 export const remove = (req, res) => res.send("remove User!");
 export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");
 };
-export const see = (req, res) => res.send("See User!");
+
+export const getChangePassword = (req, res) => {
+  return res.render("users/change-password", {
+    pageTitle: "Change Password!",
+  });
+};
+
+export const postChangePassword = async (req, res) => {
+  const {
+    session: {
+      user: { _id },
+    },
+    body: { oldPw, newPw, newPWconfirm },
+  } = req;
+  const user = await User.findById(_id);
+  const ok = await bcrypt.compare(oldPw, user.password);
+  if (!ok) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password!",
+      errorMessage: "Old Password 가 일치하지 않습니다.",
+    });
+  }
+
+  if (newPw !== newPWconfirm) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password!",
+      errorMessage: "비밀번호가 일치하지 않습니다.",
+    });
+  }
+  user.password = newPw;
+  await user.save();
+  req.session.destroy();
+  return res.redirect("/login");
+};
+
+export const see = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id).populate("videos");
+  console.log(user);
+  if (!user) {
+    return res.status(404).render("404", { pageTitle: "User Not Found" });
+  }
+  return res.render("users/profile", {
+    pageTitle: `${user.name}의 Profile`,
+    user,
+  });
+};

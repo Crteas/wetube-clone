@@ -18,7 +18,9 @@ html(lang="ko")
                         li
                             a(href="/videos/upload") Upload!
                         li
-                            a(href="#") #{loggedInUser.username}
+                            a(href="/users/edit") Edit Profile
+                        li
+                            a(href=`/users/${loggedInUser._id}`) #{loggedInUser.username} 의 Profile
                     else
                         li
                             a(href="/login") Login

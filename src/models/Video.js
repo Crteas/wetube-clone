@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 //데이터의 틀!
 const videoSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true, maxlength: 20 },
+  fileUrl: { type: String, required: true },
   description: { type: String, required: true, trim: true, maxlength: 300 },
   createdAt: { type: Date, required: true, default: Date.now },
   hashtags: [{ type: String, trim: true }],
@@ -10,6 +11,7 @@ const videoSchema = new mongoose.Schema({
     views: { type: Number, default: 0, required: true },
     rating: { type: Number, default: 0, required: true },
   },
+  owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
 });
 
 // Video.formatHashtags로 쓸수있음!

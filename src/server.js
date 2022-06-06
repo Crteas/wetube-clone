@@ -36,6 +36,7 @@ app.use(
 
 app.use(localsMiddleware);
 //누가 "/"로 시작하는 url에 들어가면 express 는 globalRouter에 들어가서 url의 마지막 주소를 찾음.
+app.use("/uploads", express.static("uploads"));
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);

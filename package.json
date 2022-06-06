@@ -7,7 +7,8 @@
     "url": "git+https://github.com/Crteas/wetube-recap.git"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node src/init.js"
+    "dev": "nodemon --exec babel-node src/init.js",
+    "assets": "webpack --config webpack.config.js"
   },
   "author": "Pru",
   "license": "MIT",
@@ -23,6 +24,7 @@
     "express-session": "^1.17.3",
     "mongoose": "^6.3.1",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "node-fetch": "^2.6.1",
     "pug": "^3.0.2"
   },
@@ -30,6 +32,8 @@
     "@babel/core": "^7.17.9",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.9.2"
   }
 }

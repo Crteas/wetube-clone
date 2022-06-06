@@ -1,3 +1,4 @@
+import multer from "multer";
 //res.local은 template와 express가 서로 공유가능한 비어있는 obj! 템플릿과 서버가 data를 주고 받을수있다.
 export const localsMiddleware = (req, res, next) => {
   res.locals.loggedIn = Boolean(req.session.loggedIn);
@@ -5,3 +6,35 @@ export const localsMiddleware = (req, res, next) => {
   res.locals.loggedInUser = req.session.user;
   next();
 };
+
+//로그인을 한 사람만 통과
+export const protectorMiddleware = (req, res, next) => {
+  if (req.session.loggedIn) {
+    return next();
+  } else {
+    return res.redirect("/login");
+  }
+};
+
+//로그인을 안한사람만 통과
+export const publicOnlyMiddleware = (req, res, next) => {
+  if (!req.session.loggedIn) {
+    return next();
+  } else {
+    return res.redirect("/");
+  }
+};
+
+export const avatarUpload = multer({
+  dest: "uploads/avatars/",
+  limits: {
+    fileSize: 3000000,
+  },
+});
+
+export const videoUpload = multer({
+  dest: "uploads/videos/",
+  limits: {
+    fileSize: 30000000,
+  },
+});
