@@ -11,7 +11,8 @@ block content
         input(name="password2",type="password",required,placeholder="Confirm PASSWORD")
         input(name="location",type="text",required,placeholder="LOCATION")
         input(type="submit",value="Join")
-    hr
-    div
+
+        include partials/social-login
+    div.auth-switch
         span 계정이 이미 있다면? 
         a(href="/login") Log in now &rarr;

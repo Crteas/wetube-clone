@@ -6,7 +6,7 @@ import MongoStore from "connect-mongo"; //세션을 저장하기위해서!
 //import Router
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
-import heroRouter from "./routers/heroRouter";
+
 import rootRouter from "./routers/rootRouter";
 
 //import middleware
@@ -37,9 +37,9 @@ app.use(
 app.use(localsMiddleware);
 //누가 "/"로 시작하는 url에 들어가면 express 는 globalRouter에 들어가서 url의 마지막 주소를 찾음.
 app.use("/uploads", express.static("uploads"));
+app.use("/assets", express.static("assets"));
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
-app.use("/hero", heroRouter);
 
 export default app;

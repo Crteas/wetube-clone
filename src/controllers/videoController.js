@@ -13,7 +13,9 @@ console.log("finished")
 
 //async await
 export const home = async (req, res) => {
-  const videos = await Video.find({}).sort({ createdAt: "desc" });
+  const videos = await Video.find({})
+    .sort({ createdAt: "desc" })
+    .populate("owner");
   //return보다는 res.render이 중요함.. return은 안전장치
   return res.render("home", { pageTitle: "home", videos });
 };
@@ -122,7 +124,7 @@ export const search = async (req, res) => {
         //REGEXP 쓰는방법!
         $regex: new RegExp(`${keyword}$`, "i"),
       },
-    });
+    }).populate("owner");
   }
   return res.render("search", { pageTitle: "SEARCH", videos });
 };
