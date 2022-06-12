@@ -1,3 +1,4 @@
+import "regenerator-runtime";
 import "dotenv/config"; //env 파일을 쓰기위한 import!
 import "./db";
 import "./models/Video";
