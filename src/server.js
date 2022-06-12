@@ -32,7 +32,7 @@ app.use(logger);
 
 //express.urlencoded post의 form안에있는 value들을 이해할 수 있도록 함.
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.json());
 app.use(
   session({
     secret: process.env.COOKIE_SECRET, //session hijack을 방지하기위한것. cookie에 sign하기위한 String

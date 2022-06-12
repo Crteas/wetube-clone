@@ -1,5 +1,7 @@
 import Video from "../models/Video";
 import User from "../models/User";
+import Comment from "../models/Comment";
+import { async } from "regenerator-runtime";
 
 /*
 callback
@@ -24,7 +26,7 @@ export const watch = async (req, res) => {
   const { id } = req.params;
 
   //mongoose에 이 ID가 Usermodel에서 왔다고 알려주기만 하면됨
-  const video = await Video.findById(id).populate("owner");
+  const video = await Video.findById(id).populate("owner").populate("comments");
   if (!video) {
     return res.status(404).render("404", { pageTitle: "VIDEO NOT FOUND" });
   }
@@ -47,7 +49,6 @@ export const getEdit = async (req, res) => {
     req.flash("error", "Not authorized");
     return res.status(403).redirect("/");
   }
-  console.log(video);
   return res.render("edit", { pageTitle: `Edit ${video.title}`, video });
 };
 export const postEdit = async (req, res) => {
@@ -145,6 +146,44 @@ export const registerView = async (req, res) => {
   return res.sendStatus(200);
 };
 
-export const hello = (req, res) => {
-  return res.send("hi");
+export const createComment = async (req, res) => {
+  const {
+    session: { user },
+    body: { text },
+    params: { id },
+  } = req;
+
+  const video = await Video.findById(id);
+
+  if (!video) {
+    return res.sendStatus(404);
+  }
+
+  const comment = await Comment.create({
+    text,
+    owner: user._id,
+    video: id,
+  });
+
+  video.comments.push(comment._id);
+  video.save();
+  return res.status(201).json({
+    newCommentId: comment._id,
+  });
+};
+
+export const deleteComment = async (req, res) => {
+  const {
+    params: { id },
+    session: { user },
+  } = req;
+  const comment = await Comment.findById(id);
+  if (!comment) {
+    return res.sendStatus(404);
+  }
+  if (!(String(user._id) === String(comment.owner))) {
+    return res.sendStatus(400);
+  }
+  await Comment.findByIdAndDelete(id);
+  return res.sendStatus(200);
 };
