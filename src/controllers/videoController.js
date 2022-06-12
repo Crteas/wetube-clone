@@ -44,6 +44,7 @@ export const getEdit = async (req, res) => {
   }
 
   if (String(video.owner) !== String(_id)) {
+    req.flash("error", "Not authorized");
     return res.status(403).redirect("/");
   }
   console.log(video);
@@ -69,6 +70,9 @@ export const postEdit = async (req, res) => {
 };
 
 export const getUpload = (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.redirect("/login");
+  }
   return res.render("upload", { pageTitle: "Upload Video!" });
 };
 
@@ -76,14 +80,15 @@ export const postUpload = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
-  const { path: fileUrl } = req.file;
+  const { video, thumb } = req.files;
   const { title, description, hashtags } = req.body;
   //NEW video document
   try {
     const newVideo = await Video.create({
       title,
       description,
-      fileUrl,
+      fileUrl: video[0].path,
+      thumbUrl: thumb[0].path.replace(/[\\]/g, "/"),
       owner: _id,
       hashtags: Video.formatHashtags(hashtags),
     });
@@ -127,4 +132,19 @@ export const search = async (req, res) => {
     }).populate("owner");
   }
   return res.render("search", { pageTitle: "SEARCH", videos });
+};
+
+export const registerView = async (req, res) => {
+  const { id } = req.params;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  video.meta.views = video.meta.views + 1;
+  await video.save();
+  return res.sendStatus(200);
+};
+
+export const hello = (req, res) => {
+  return res.send("hi");
 };

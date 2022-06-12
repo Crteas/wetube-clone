@@ -165,7 +165,6 @@ export const startKakaoLogin = (req, res) => {
   };
   const params = new URLSearchParams(config).toString();
   const finalUrl = `${baseUrl}?${params}`;
-  console.log(finalUrl);
   return res.redirect(finalUrl);
 };
 
@@ -272,11 +271,16 @@ export const postEdit = async (req, res) => {
 };
 export const remove = (req, res) => res.send("remove User!");
 export const logout = (req, res) => {
+  req.flash("info", "GoodBye");
   req.session.destroy();
   return res.redirect("/");
 };
 
 export const getChangePassword = (req, res) => {
+  if (req.session.user.socialOnly === true) {
+    req.flash("error", "소셜로그인 사용자는 비밀번호를 변경할 수 없습니다.");
+    return redirect("/");
+  }
   return res.render("users/change-password", {
     pageTitle: "Change Password!",
   });
@@ -306,6 +310,7 @@ export const postChangePassword = async (req, res) => {
   }
   user.password = newPw;
   await user.save();
+  req.flash("info", "비밀번호 변경이 완료되었습니다.");
   req.session.destroy();
   return res.redirect("/login");
 };
@@ -319,7 +324,6 @@ export const see = async (req, res) => {
       model: "User",
     },
   });
-  console.log(user);
   if (!user) {
     return res.status(404).render("404", { pageTitle: "User Not Found" });
   }
