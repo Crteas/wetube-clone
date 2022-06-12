@@ -159,7 +159,7 @@ export const startKakaoLogin = (req, res) => {
   const baseUrl = "https://kauth.kakao.com/oauth/authorize";
   const config = {
     client_id: process.env.KA_CLIENT,
-    redirect_uri: "http://localhost:9000/users/kakao/finish",
+    redirect_uri: "https://pru-tube.herokuapp.com/users/kakao/finish",
     response_type: "code",
     client_secret: process.env.KA_SECRET,
   };
