@@ -1,15 +1,9 @@
 extends ../base
 include ../mixins/video
 
-//socialOnly 유저가 프로필 변경하면 버그가 있는듯함.
-//if loggedInUser.socialOnly
-    img(src=user.avatarUrl).avatar
-//else
-    img(src="/" + user.avatarUrl).avatar
-
 block content
     div.profile__data
-        img(src="/" + user.avatarUrl).avatar
+        img(src=`${user.avatarUrl}` crossorigin).avatar
         h3=user.name
     div.video-grid
         each video in user.videos
