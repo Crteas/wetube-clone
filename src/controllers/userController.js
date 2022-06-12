@@ -173,7 +173,7 @@ export const finishKakaoLogin = async (req, res) => {
   const config = {
     client_id: process.env.KA_CLIENT,
     client_secret: process.env.KA_SECRET, //finish쪽도 시크릿키 필요함!
-    redirect_uri: "http://localhost:9000/users/kakao/finish",
+    redirect_uri: "https://pru-tube.herokuapp.com/users/kakao/finish",
     grant_type: "authorization_code",
     code: req.query.code,
   };
