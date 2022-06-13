@@ -18,7 +18,7 @@ header
                 li
                     a(href=`/users/${loggedInUser._id}`)
                         if loggedInUser.avatarUrl === ""
-                            span 🐱‍🏍
+                            span=loggedInUser.username
                         else
                             img.header__avatar(src=`${loggedInUser.avatarUrl}`,crossorigin)
                     
